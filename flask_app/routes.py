@@ -15,20 +15,7 @@ import webbrowser
 
  # In python 2.7
 import sys
-URL = "https://geocode.search.hereapi.com/v1/geocode"
-location =  "Autryville"#taking user input
-api_key = 'HCQ-VGfKxiIoy1CoOH4mCCRAv9Up8ruRs09NrZQ9Dd4' # Acquire from developer.here.com
-PARAMS = {'apikey':api_key,'q':location}
 
-# sending get request and saving the response as response object
-r = requests.get(url = URL, params = PARAMS)
-data = r.json()
-print(data, file=sys.stderr)
-
-#Acquiring the latitude and longitude from JSON
-latitude = data['items'][0]['position']['lat']
-#print(latitude)
-longitude = data['items'][0]['position']['lng']
 #print(longitude)
 
 UPLOAD_FOLDER = 'ID'
@@ -41,8 +28,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000 * 10
 @app.route('/map/newmap')
 
-def map_func():
-	return render_template('map.html',apikey=api_key,latitude=latitude,longitude=longitude)#map.html is my HTML file name
+#def map_func():
+#	return render_template('map.html',apikey=api_key,latitude=latitude,longitude=longitude)#map.html is my HTML file name
 
 
 @app.route("/")
@@ -216,17 +203,35 @@ def user_exists(username, email):
     # No matching user
     return False
 
+def location(city):
+    URL = "https://geocode.search.hereapi.com/v1/geocode"
+    location =  city#taking user input
+    api_key = 'HCQ-VGfKxiIoy1CoOH4mCCRAv9Up8ruRs09NrZQ9Dd4' # Acquire from developer.here.com
+    PARAMS = {'apikey':api_key,'q':location}
+
+    # sending get request and saving the response as response object
+    r = requests.get(url = URL, params = PARAMS)
+    data = r.json()
+    print(data, file=sys.stderr)
+
+    #Acquiring the latitude and longitude from JSON
+    latitude = data['items'][0]['position']['lat']
+    #print(latitude)
+    longitude = data['items'][0]['position']['lng']
+    return longitude, latitude
 @app.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
+
     form = PostForm()
     if form.validate_on_submit():
+        longitude, latitude = location(form.city.data)
         post = Post(title=form.title.data,  content=form.content.data,author=current_user,Longitude=longitude,Latitude=latitude)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
-        map_func()
-        webbrowser.open_new_tab('templates/map.html')
+        """map_func()
+        webbrowser.open_new_tab('templates/map.html')"""
         return redirect(url_for('index2'))
     return render_template('create_post.html', title='New Post',
                            form=form, legend='New Post')

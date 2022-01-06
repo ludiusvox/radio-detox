@@ -7,4 +7,5 @@ class PostForm(FlaskForm):
     content = TextAreaField('Content', validators=[DataRequired()])
     Latitude = StringField('Latitude')
     Longitude = StringField('Longitude')
+    city = StringField('City')
     submit = SubmitField('Post')
