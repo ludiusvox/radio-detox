@@ -3,7 +3,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
     <a class="navbar-brand cursor-onhover" href="/">
-      <span class="nav-title">//blog</span>
+      <span class="nav-title">radio-detox</span>
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse"
     data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,8 +14,12 @@
 
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="/internal">/internal</a>
+          <a class="nav-link" href="/notlogin">/internal</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/about">/about</a>
+        </li>
+
       </ul>
 
       <ul class="navbar-nav my-2 my-lg-0">
@@ -24,16 +28,22 @@
         <li class="nav-item">
           <a class="nav-link" href="/post/new">/new post</a>
         </li>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/post">/posts</a>
+      </li>
         <li class="nav-item">
           <a class="nav-link" href="/logout">/logout</a>
         </li>
         {% else %}
+
         <li class="nav-item">
           <a class="nav-link" href="/login">/login</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/register">/register</a>
         </li>
+
         {% endif %}
 
       </ul>

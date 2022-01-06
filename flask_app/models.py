@@ -26,6 +26,7 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.String(120), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
+    Longitude = db.Column(db.Integer)
+    Latitude = db.Column(db.Integer)
     def __repr__(self):
         return(self.id)

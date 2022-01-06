@@ -1,3 +1,4 @@
+from __future__ import print_function
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from passlib.hash import sha256_crypt
@@ -7,9 +8,28 @@ from flask_app.models import User, Post
 from flask_app.forms import PostForm
 from flask_restful import Resource, Api, reqparse
 import os
-
+import requests
+import json
 from werkzeug.utils import secure_filename
+import webbrowser
 
+ # In python 2.7
+import sys
+URL = "https://geocode.search.hereapi.com/v1/geocode"
+location =  "Autryville"#taking user input
+api_key = 'HCQ-VGfKxiIoy1CoOH4mCCRAv9Up8ruRs09NrZQ9Dd4' # Acquire from developer.here.com
+PARAMS = {'apikey':api_key,'q':location}
+
+# sending get request and saving the response as response object
+r = requests.get(url = URL, params = PARAMS)
+data = r.json()
+print(data, file=sys.stderr)
+
+#Acquiring the latitude and longitude from JSON
+latitude = data['items'][0]['position']['lat']
+#print(latitude)
+longitude = data['items'][0]['position']['lng']
+#print(longitude)
 
 UPLOAD_FOLDER = 'ID'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -19,12 +39,26 @@ def allowed_file(filename):
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000 * 10
+@app.route('/map/newmap')
+
+def map_func():
+	return render_template('map.html',apikey=api_key,latitude=latitude,longitude=longitude)#map.html is my HTML file name
+
+
 @app.route("/")
 def index():
     db.create_all()
     posts = Post.query.all()
     return render_template("index.html", posts=posts)
+@app.route("/notlogin")
+def notlogin():
 
+    return render_template("notlogin.html")
+
+
+def map_func():
+
+    return render_template('map.html',apikey=api_key,latitude=latitude,longitude=longitude)
 
 
 
@@ -39,7 +73,7 @@ def download_file(name):
 
 @app.route("/about")
 def about():
-    return render_template("index.html")
+    return render_template("about.html")
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -78,7 +112,35 @@ def predict():
             else:
                 return render_template("failed.html")
 
+@app.route('/login', methods=['POST','GET'])
+def logon():
+    if request.method == 'GET':
+        return render_template('login.html')
 
+    else:
+        username = request.form.get('username')
+        password_candidate = request.form.get('password')
+
+        # Query for a user with the provided username
+        result = User.query.filter_by(username=username).first()
+
+        # If a user exsists and passwords match - login
+        if result is not None and sha256_crypt.verify(password_candidate, result.password):
+
+            # Init session vars
+            login_user(result)
+            flash('Logged in!', 'success')
+
+            return redirect(url_for('index2'))
+
+
+        else:
+            flash('Incorrect Login!', 'danger')
+            return render_template('login.html')
+
+
+
+    return render_template("login.html")
 
 @app.route('/post',methods=['POST'])
 def loggedin():
@@ -140,7 +202,7 @@ def index2():
 def logout():
     logout_user()
     flash('Logged out!', 'success')
-
+    return render_template("logout.html")
 
 
 # Check if username or email are already taken
@@ -159,11 +221,13 @@ def user_exists(username, email):
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        post = Post(title=form.title.data,  content=form.content.data,author=current_user,Longitude=longitude,Latitude=latitude)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
-        return redirect(url_for('index'))
+        map_func()
+        webbrowser.open_new_tab('templates/map.html')
+        return redirect(url_for('index2'))
     return render_template('create_post.html', title='New Post',
                            form=form, legend='New Post')
 
@@ -172,8 +236,16 @@ def new_post():
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post)
+@app.route('/_get_post_json/', methods=['POST'])
+def get_post_json():
+    data = request.get_json()
 
-
+    return jsonify(status="success", data=data)
+@app.route("/post")
+def posts():
+    db.create_all()
+    posts = Post.query.all()
+    return render_template("index2.html", posts=posts)
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
 @login_required
 def update_post(post_id):
@@ -184,6 +256,8 @@ def update_post(post_id):
     if form.validate_on_submit():
         post.title = form.title.data
         post.content = form.content.data
+        longitude = longitude
+        latitude = latitude
         db.session.commit()
         flash('Your post has been updated!', 'success')
         return redirect(url_for('post', post_id=post.id))

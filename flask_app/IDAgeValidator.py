@@ -12,7 +12,7 @@ import json
 import pandas as pd
 import collections
 import cv2
-
+import os
 def get_grayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -81,7 +81,8 @@ class readdl:
         filename = "temp.jpeg"
         cv2.imwrite(filename, pix)
         text = pytesseract.image_to_string(Image.open(filename) ,lang='eng')
-
+        os.remove(path)
+        os.remove("temp.jpeg")
         return text
 class verify:
     def __init__(self, model,fname,mname,lname,street,city,state,Zipcode,age):
@@ -177,7 +178,7 @@ class verify:
             return str("ID works")
         else:
 
-
+            flash("ID Check failed!  Try taking another photo 6 inches away from the camera with no flash")
             return str("Take another picture")
 
 
