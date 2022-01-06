@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[2]:
+
+from flask import request
+import os
+import pickle
+from flask import Flask, render_template, request
+from flask_restful import Resource, Api, reqparse
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate
+from flask_login import LoginManager
+from flask_login import (
+    UserMixin,
+    login_user,
+    LoginManager,
+    current_user,
+    logout_user,
+    login_required,
+)
+import numpy as np
+import IDAgeValidator as ID
+app = Flask(__name__)
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+login_manager = LoginManager()
+login_manager = LoginManager()
+
+login = LoginManager(app)
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+@app.route('/', methods=['GET', 'POST'])
+
+
+def index():
+    return render_template('index.html')
+    
+    
+# Require a parser to parse our POST request.
+
+    
+# Unpickle our model so we can use it!
+
+class Predict(Resource):
+    def post(self):
+   
+
+        model = ID.readdl.readlicense("driverslicense.jpg")
+        x = ID.verify.validate(self,model,fname,mname,lname,street,city,state,Zip,age)
+        if request.method == 'POST':
+            fname = request.form.get('fname')
+            mname = request.form.get('mname')
+            lname = request.form.get('lname')
+            street = request.form.get('street')
+            city = request.form.get('city')
+            state = request.form.get('state')
+            Zip = request.form.get('zip')
+            age = request.form.get('age')
+    
+            return {"class":x}
+@app.route('/predict', methods=['GET', 'POST'])
+def result():
+   if request.method == 'POST':
+      result = request.form
+      return render_template("predict.html",result = result)
+
+'''<h1>The Student Name is: {}</h1>
+<h1>The Course value is: {}</h1>.format(fname,mname,lname,street,city,state,Zip,age)
+
+<form method="POST">
+<div><label>fname: <input type="text" name="name"></label></div>
+<div><label>mname: <input type="text" name="Course"></label></div>
+<div><label>lname: <input type="text" name="name"></label></div>
+<div><label>street: <input type="text" name="Course"></label></div>
+<div><label>city: <input type="text" name="name"></label></div>
+<div><label>state: <input type="text" name="Course"></label></div>
+<div><label>zip: <input type="text" name="name"></label></div>
+<div><label>age: <input type="text" name="Course"></label></div>
+<input type="submit" value="Submit">
+</form>''' 
+
+if __name__ == "__main__":
+    app.run()

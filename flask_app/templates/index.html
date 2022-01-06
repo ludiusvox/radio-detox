@@ -1,19 +1,22 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<h1>Spell all words exactly as spelled on ID</h1>
 
-  {% for post in posts %}
-    <article class="media content-section">
-      <div class="media-body">
-        <div class="article-metadata">
-          <a class="mr-2" href="#">{{ post.author.username }}</a>
-          <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
-        </div>
-
-        <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
-        <p class="article-content">{{ post.content }}</p>
-      </div>
-    </article>
-  {% endfor %}
+<form action="" method="POST" enctype=multipart/form-data>
+<input type="file" name="file">
+<div><label>First Name<input type="text" name="fname"></label></div>
+<div><label>Middle Name<input type="text" name="mname"></label></div>
+<div><label>Last Name<input type="text" name="lname"></label></div>
+<div><label>street: <input type="text" name="street"></label></div>
+<div><label>city: <input type="text" name="city"></label></div>
+<div><label>state: <input type="text" name="state"></label></div>
+<div><label>zip: <input type="text" name="zip"></label></div>
+<div><label>age: <input type="text" name="age"></label></div>
+<input type="submit" value="Upload">
+</form>
+<p> (This is an open sorce project, the only data logged (check the source code), is
+  your email, username, and password.  This verification runs through the USPS and validates address
+  validity and might verify age in the future </p> 
 
 {% endblock %}

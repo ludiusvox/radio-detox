@@ -1,11 +1,24 @@
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from passlib.hash import sha256_crypt
-
+from flask_app import IDAgeValidator as ID
 from flask_app import app, db
 from flask_app.models import User, Post
 from flask_app.forms import PostForm
+from flask_restful import Resource, Api, reqparse
+import os
 
+from werkzeug.utils import secure_filename
+
+
+UPLOAD_FOLDER = 'ID'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000 * 10
 @app.route("/")
 def index():
     db.create_all()
@@ -13,51 +26,89 @@ def index():
     return render_template("index.html", posts=posts)
 
 
+
+
+
+
+from flask import send_from_directory
+
+@app.route('/uploads/<name>')
+def download_file(name):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], name)
+
+
 @app.route("/about")
 def about():
     return render_template("index.html")
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-@app.route("/register", methods=['GET', 'POST'])
+@app.route("/", methods=['GET','POST'])
+
+
+def predict():
+
+    if request.method == 'POST':
+            # check if the post request has the file part
+
+        file = request.files['file']
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            fname = request.form.get('fname')
+            mname = request.form.get('mname')
+            lname = request.form.get('lname')
+            street = request.form.get('street')
+            city = request.form.get('city')
+            state = request.form.get('state')
+            Zipcode = request.form.get('zip')
+            age = request.form.get('age')
+            model = ID.readdl.readlicense(app.config['UPLOAD_FOLDER']+"/"+filename)
+            Zipcode = str(Zipcode)
+            x = ID.verify.validate(model,fname,mname,lname,street,city,state,Zipcode,age)
+            if x == str("ID works"):
+                return render_template("login.html")
+            else:
+                return render_template("failed.html")
+
+
+
+@app.route('/post',methods=['POST'])
+def loggedin():
+    if request.method =='POST':
+        return render_template('create_post.html')
+
+
+
+
+
+@app.route('/register',methods=['POST','GET'])
 def register():
+    if request.method =='POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password1')
+
+        new_user = User(email=email, username=username,password=sha256_crypt.hash(password))
+
+    # add the new user to the database
+        db.session.add(new_user)
+        db.session.commit()
+        return render_template('login.html')
+    else:
+        return render_template('register.html')
+@app.route('/login', methods=['GET', 'POST'])
+def login():
 
     if request.method == 'GET':
         return render_template('register.html')
-
-    else:
-        # Create user object to insert into SQL
-        passwd1 = request.form.get('password1')
-        passwd2 = request.form.get('password2')
-
-        if passwd1 != passwd2 or passwd1 == None:
-            flash('Password Error!', 'danger')
-            return render_template('register.html')
-
-        hashed_pass = sha256_crypt.encrypt(str(passwd1))
-
-        new_user = User(
-            username=request.form.get('username'),
-            email=request.form.get('username'),
-            password=hashed_pass)
-
-        if user_exsists(new_user.username, new_user.email):
-            flash('User already exsists!', 'danger')
-            return render_template('register.html')
-        else:
-            # Insert new user into SQL
-            db.session.add(new_user)
-            db.session.commit()
-
-            login_user(new_user)
-
-            flash('Account created!', 'success')
-            return redirect(url_for('index'))
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'GET':
-        return render_template('login.html')
 
     else:
         username = request.form.get('username')
@@ -72,22 +123,28 @@ def login():
             # Init session vars
             login_user(result)
             flash('Logged in!', 'success')
-            return redirect(url_for('index'))
+
+            return redirect(url_for('index2'))
+
 
         else:
             flash('Incorrect Login!', 'danger')
             return render_template('login.html')
-
+@app.route("/internal")
+def index2():
+    db.create_all()
+    posts = Post.query.all()
+    return render_template("index2.html", posts=posts)
 
 @app.route("/logout")
 def logout():
     logout_user()
     flash('Logged out!', 'success')
-    return redirect(url_for('index'))
+
 
 
 # Check if username or email are already taken
-def user_exsists(username, email):
+def user_exists(username, email):
     # Get all Users in SQL
     users = User.query.all()
     for user in users:
