@@ -1,0 +1,50 @@
+{% extends 'login-layout.html' %}
+{% block content %}
+<script src="https://unpkg.com/axios/dist/axios.min.js">
+
+
+    
+</script>>
+
+
+
+
+</script>  
+
+
+<div class="main">
+
+        {% from "security/_macros.html" import render_field_with_errors, render_field, render_field_errors %}
+        
+        <h2>Create an Account</h2>
+
+        
+            <form method="POST" action="http://localhost:5000/upload" enctype = "multipart/form-data">
+              
+                <label>enter name exactly the same way as the ID:<input type="text" class="form-control" name="name" > </label>
+                <label for="photo">Upload your ID</label>
+    
+                <input type = "file" name = "file" />
+                <button name="my-button" formmethod="post" id="my-button"  value='Upload'>Submit</button>
+                
+
+          
+            </form>
+
+        
+    
+
+    </div>
+
+    
+
+         Have an account? <a href="/login">Sign in</a>
+         
+    </div>
+    <div>
+        <a href="/blog">setup event seeking profile</a>
+    </div>
+    <div>
+        <a href="/eventblog">setup event listing</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+
+    <div id="app">
+        <welcome>This is a test for the recommender system</welcome>
+        
+        {% for table in tables %}
+        <h2>{{titles[loop.index]}}</h2>
+        {{ table|safe }}
+         {% endfor %}
+        
+       
+        
+    
+
+
+
+    </div>
+
+
+{% endblock %}

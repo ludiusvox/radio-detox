@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+
+    <div id="app">
+        <welcome>This is a test for the blog</welcome>
+        <p>
+            This is a test to enter in an event.
+
+        </p>
+        
+            </textarea>
+        <form method="POST" action="/eventblog">
+            <label for="location">Location:</label><br>
+            <input type="text" id="location" name="location"><br>
+            <label for="date">Date:</label><br>
+            <input type="text" id="date" name="date">
+
+
+
+            <textarea name="message" rows="50" cols="50">
+                Enter in your favorite tastes here!
+                </textarea> 
+            
+                
+            </textarea>
+                <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div>
+        <a href="/events">Check event matches to personal user profile</a>
+    </div>
+
+
+{% endblock %}

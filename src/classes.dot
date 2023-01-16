@@ -1,0 +1,16 @@
+digraph "classes" {
+rankdir=BT
+charset="utf-8"
+"enferno.settings.Config" [color="black", fontcolor="black", label="{Config|APP_DIR : bytes, str\lCACHE_NO_NULL_WARNING : bool\lCACHE_TYPE : str\lDEBUG : bool\lDEBUG_TB_ENABLED : bool\lDEBUG_TB_INTERCEPT_REDIRECTS : bool\lLOGIN_DISABLED : bool\lPERMANENT_SESSION_LIFETIME : int\lPOST_LOGIN_VIEW : str\lPROJECT_ROOT : bytes, str\lREMEMBER_COOKIE_SAMESITE : str\lSECRET_KEY : str\lSECURITY_CONFIRMABLE : bool\lSECURITY_CSRF_COOKIE_NAME : str\lSECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS : bool\lSECURITY_EMAIL_VALIDATOR_ARGS : dict\lSECURITY_PASSWORD_HASH : str\lSECURITY_PASSWORD_SALT : str\lSECURITY_POST_CONFIRM_VIEW : str\lSECURITY_RECOVERABLE : bool\lSECURITY_REGISTERABLE : bool\lSECURITY_TRACKABLE : bool\lSECURITY_USER_IDENTITY_ATTRIBUTES : list\lSEND_REGISTEREMAIL : bool\lSESSION_COOKIE_SAMESITE : str\lSESSION_TYPE : str\lSQLALCHEMY_DATABASE_URI : str\lSQLALCHEMY_ENGINE_OPTIONS : dict\lSQLALCHEMY_RECORD_QUERIES : bool\lSQLALCHEMY_TRACK_MODIFICATIONS : bool\lTESTING : bool\lWTF_CSRF_CHECK_DEFAULT : bool\lsecret\lsecret_key\l|uia_username_mapper()\l}", shape="record", style="solid"];
+"enferno.tasks.ContextTask" [color="black", fontcolor="black", label="{ContextTask|abstract : bool\l|}", shape="record", style="solid"];
+"enferno.settings.DevConfig" [color="black", fontcolor="black", label="{DevConfig|CACHE_TYPE : str\lDEBUG : bool\lDEBUG_TB_ENABLED : bool\lENV : str\l|}", shape="record", style="solid"];
+"enferno.user.forms.ExtendedLoginForm" [color="black", fontcolor="black", label="{ExtendedLoginForm|\l|}", shape="record", style="solid"];
+"enferno.user.forms.ExtendedRegisterForm" [color="black", fontcolor="black", label="{ExtendedRegisterForm|name : StringField\l|}", shape="record", style="solid"];
+"enferno.settings.ProdConfig" [color="black", fontcolor="black", label="{ProdConfig|DEBUG : bool\lDEBUG_TB_ENABLED : bool\lENV : str\l|}", shape="record", style="solid"];
+"enferno.user.models.Role" [color="black", fontcolor="black", label="{Role|description\lid\lname\l|}", shape="record", style="solid"];
+"enferno.user.models.User" [color="black", fontcolor="black", label="{User|active\lconfirmed_at\lcurrent_login_at\lcurrent_login_ip\lemail\lfs_uniquifier\lid\llast_login_at\llast_login_ip\llogin_count\lpassword\lprofile_information\lroles\lusername\l|return_prof()\l}", shape="record", style="solid"];
+"enferno.user.forms.UserInfoForm" [color="black", fontcolor="black", label="{UserInfoForm|\l|}", shape="record", style="solid"];
+"enferno.public.forms.init_Register" [color="black", fontcolor="black", label="{init_Register|name : StringField\lsubmit : SubmitField\l|}", shape="record", style="solid"];
+"enferno.settings.DevConfig" -> "enferno.settings.Config" [arrowhead="empty", arrowtail="none"];
+"enferno.settings.ProdConfig" -> "enferno.settings.Config" [arrowhead="empty", arrowtail="none"];
+}

@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+
+    <div id="app">
+        <welcome>This is a test for the blog</welcome>
+        <p>
+            We want to see what the blog says maybe plugin an API when authenticated.(working)
+
+        </p>
+        <form method="POST" action="/blog">
+            <textarea name="message" rows="50" cols="50">
+                Enter in your favorite tastes here!
+                </textarea> 
+                <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div>
+        <a href="/after_profile"> Check profile matches</a>
+    </div>
+
+
+{% endblock %}
